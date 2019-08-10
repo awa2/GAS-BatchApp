@@ -1,0 +1,26 @@
+{
+  "name": "@ts-module-for-gas/gas-batchapp",
+  "version": "0.1.0",
+  "description": "Google Apps Script batch utilities for developing with TypeScript",
+  "main": "./src/index.ts",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@types/google-apps-script": "0.0.56"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/awa2/GAS-BatchApp.git"
+  },
+  "author": "awa2 <takanori.awatsu+npm@gmail.com> (Takanori Awatsu)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/awa2/GAS-BatchApp/issues"
+  },
+  "homepage": "https://github.com/awa2/GAS-BatchApp#readme"
+}
