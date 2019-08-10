@@ -17,11 +17,11 @@ export default class BatchApp {
         this.now = new Date();
     }
 
-    public on(callback: (from: Date, to: Date) => any) {
+    public on<T>(callback: (from: Date, to: Date) => any, option?: T) {
         return callback(this.last_completed_at, this.now);
     }
 
-    public onGmailReceived(search: string, callback: (latestMessage: GoogleAppsScript.Gmail.GmailMessage) => any) {
+    public onGmailReceived<T>(search: string, callback: (latestMessage: GoogleAppsScript.Gmail.GmailMessage, option?: T) => any, option?: T) {
         const after = this.last_completed_at.valueOf() / 1000
 
         const Threads = GmailApp.search(`${search} after:${after}`);
@@ -29,24 +29,23 @@ export default class BatchApp {
             const Messages = Thread.getMessages();
             return Messages.map(Message => {
                 if (this.last_completed_at < Message.getDate()) {
-                    return callback(Message);
+                    return callback(Message, option);
                 }
             })
         });
         return rets;
     }
 
-    public onCalendarModified(calendarId: string, callback: (CalendarEvents: CalendarEvent) => any) {
-        const option = {
-            syncToken: PropertiesService.getUserProperties().getProperty('CALENDAR_SYNC_TOKEN'),
-            maxResults: 100
-        }
+    public onCalendarModified<T>(calendarId: string, callback: (CalendarEvents: CalendarEvent, option?: T) => any, option?: T) {
         let pageToken;
         let res: any;
         let Events: CalendarEvent[];
         do {
             try {
-                res = Calendar.Events.list(calendarId, option) as { items: CalendarEvent[], nextPageToken?: string, nextSyncToken: string }
+                res = Calendar.Events.list(calendarId, {
+                    syncToken: PropertiesService.getUserProperties().getProperty('CALENDAR_SYNC_TOKEN'),
+                    maxResults: 100
+                }) as { items: CalendarEvent[], nextPageToken?: string, nextSyncToken: string }
             } catch (error) {
                 if (error.message === 'Sync token is no longer valid, a full sync is required.') {
                     PropertiesService.getUserProperties().deleteProperty('CALENDAR_SYNC_TOKEN');
@@ -66,7 +65,7 @@ export default class BatchApp {
         PropertiesService.getUserProperties().setProperty('CALENDAR_SYNC_TOKEN', res.nextSyncToken);
 
         return Events.map(event => {
-            return callback(event);
+            return callback(event, option);
         })
     }
     public end() {
