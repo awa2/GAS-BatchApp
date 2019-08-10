@@ -33,17 +33,17 @@ export default class BatchApp {
                 }
             })
         });
-        return rets.length;
+        return rets;
     }
 
-    public onCalendarModified(calendarId: string, callback: (CalendarEvents: CalendarEvent[]) => any) {
+    public onCalendarModified(calendarId: string, callback: (CalendarEvents: CalendarEvent) => any) {
         const option = {
             syncToken: PropertiesService.getUserProperties().getProperty('CALENDAR_SYNC_TOKEN'),
             maxResults: 100
         }
         let pageToken;
         let res: any;
-        let Events: any[];
+        let Events: CalendarEvent[];
         do {
             try {
                 res = Calendar.Events.list(calendarId, option) as { items: CalendarEvent[], nextPageToken?: string, nextSyncToken: string }
@@ -64,7 +64,10 @@ export default class BatchApp {
             pageToken = res.nextPageToken;
         } while (pageToken);
         PropertiesService.getUserProperties().setProperty('CALENDAR_SYNC_TOKEN', res.nextSyncToken);
-        return Events;
+
+        return Events.map(event => {
+            return callback(event);
+        })
     }
     public end() {
         try {
