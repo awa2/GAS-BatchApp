@@ -1,6 +1,6 @@
 {
   "name": "@ts-module-for-gas/gas-batchapp",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Google Apps Script batch utilities for developing with TypeScript",
   "main": "./src/index.ts",
   "directories": {
